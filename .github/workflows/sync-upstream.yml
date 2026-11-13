@@ -1,0 +1,22 @@
+# 팀 저장소(Techeer-2026-2-E/catchtable-frontend)의 dev를 이 포크의 dev로 자동 반영한다.
+# dev가 갱신되면 Vercel이 자동으로 다시 배포한다.
+# 이 파일은 포크 전용 브랜치(fork-sync)에만 두고 dev에는 넣지 않는다. dev에 넣으면 팀 저장소와 갈라져 동기화가 멈춘다.
+name: Sync upstream dev
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # 15분마다 (GitHub 사정으로 몇 분 늦을 수 있음)
+  workflow_dispatch:         # Actions 탭에서 수동 실행
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge upstream dev into fork dev
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method POST "repos/${{ github.repository }}/merge-upstream" -f branch=dev
